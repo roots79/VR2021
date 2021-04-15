@@ -43,7 +43,7 @@ require_once "../../../conf.php";
 				} 
 				else
 				{
-					$raw_news_html .= "Variautor";
+					$raw_news_html .= "Anonüümne";
 				}
 				$raw_news_html .="</p>";
 			}

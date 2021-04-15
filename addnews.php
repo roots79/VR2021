@@ -1,23 +1,39 @@
 <?php
 
-require_once "../../../conf.php";
+require_once "../../../conf.php"; //kus asuvad serveri info
 // echo $server_host;
 
 $news_error = null;
+$news_title = null;
+$news_content =null;
 //var_dump($_POST); //on olemas ka $_GET
-	if(isset($_POST["news_submit"]))
-		{if(empty($_POST["news_title_input"]))
-			{$news_error="Puudub uudise pealkiri! ";
 
-			}
-		if(empty($_POST["news_content_input"]))
+	if(isset($_POST["news_submit"]))
+		{	
+			if(empty($_POST["news_title_input"]))
+				{
+					$news_error="Puudub uudise pealkiri! ";
+				}
+			else
 			{
-				$news_error.="Uudise tekst puudu! ";
-			}
-		if(empty($news_error))//salvestame andmebaasi
+				$news_title=$_POST["news_title_input"];
+			}	
+			if(empty($_POST["news_content_input"]))
+				{
+					$news_error.="Uudise tekst puudu! ";
+				}
+			else
 			{
-				store_news($_POST["news_title_input"],$_POST["news_content_input"],$_POST["news_author_input"]);
+				$news_content=$_POST["news_content_input"];
 			}
+			if(empty($news_error))//salvestame andmebaasi
+				{
+					store_news($_POST["news_title_input"],$_POST["news_content_input"],$_POST["news_author_input"]);
+					$news_title = null;
+					$news_content =null;
+
+				}
+
 		}
 
 		function store_news($news_title,$news_content,$news_author)
@@ -37,6 +53,24 @@ $news_error = null;
 			$stmt->close();
 			$conn->close();
 		}
+		
+
+		if ($_SERVER["REQUEST_METHOD"] == "POST")
+		{
+			$news_title_input = test_input($_POST["news_title_input"]);
+			$news_content_input = test_input($_POST["news_content_input"]);	
+		}
+	
+
+
+
+		function test_input($data)
+		 {
+            $data = trim($data);
+            $data = stripslashes($data);
+            $data = htmlspecialchars($data);
+            return $data;
+         }
 
 ?>
 <!DOCTYPE html>
@@ -51,14 +85,14 @@ $news_error = null;
 	</h1>
 	<p>See leht on valminud õppetöö raames!</p>
 	<hr>
-	<form method="POST">
+	<form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
 		<label for="news_title_input">Uudise pealkiri</label>
 		<br>
-		<input type="text" id="news_title_input" name="news_title_input" placeholder="Pealkiri">
+		<input type="text" id="news_title_input" name="news_title_input" placeholder="Pealkiri" value="<?php echo $news_title?>">
 		<br>
 		<label for="news_content_input"> Uudise tekst </lable>
 		<br>
-		<textarea id="news_content_input" name="news_content_input" placeholder="Uudise tekst" row="6" cols="40"></textarea>
+		<textarea id="news_content_input" name="news_content_input" placeholder="Uudise tekst" row="6" cols="40"><?php echo $news_content?></textarea>
 		<br>
 		<label for="news_author_input">Uudise lisaja</label>
 		<br>
